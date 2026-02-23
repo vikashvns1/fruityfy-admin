@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+/* You can keep your custom styles below if you want */
+body {
+  background-color: #FEFCE8; 
+  color: #064E3B;            
+  font-family: 'Montserrat', sans-serif;
+}
