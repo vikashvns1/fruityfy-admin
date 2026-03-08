@@ -54,6 +54,7 @@ import AddEditIngredient from "./pages/Ingredients/AddEditIngredient";
 import ProductMapping from "./pages/Ingredients/ProductMapping";
 import ManageOptions from "./pages/Ingredients/ManageOptions";
 import CustomOptions from './pages/Ingredients/CustomOptions';
+import GreetingManager from './pages/Greetings/GreetingManager';
 
 function App() {
   return (
@@ -125,6 +126,8 @@ function App() {
       <Route path="/custom-options" element={<CustomOptions />} />
       <Route path="/options/add" element={<ManageOptions />} />
       <Route path="/options/edit/:id" element={<ManageOptions />} />
+      <Route path="/admin/greetings" element={<GreetingManager />} />
+      
     </Routes>
   );
 }

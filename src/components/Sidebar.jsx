@@ -72,7 +72,8 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             submenu: [
                 { name: 'Popups', path: '/popups', icon: <MdViewCarousel size={20} /> },
                 { name: 'Occasions', path: '/marketing/occasions', icon: <MdCelebration size={20} /> },
-                { name: 'Weekly Fruit Boxes', path: '/weekly-boxes', icon: <MdInventory2 size={20} /> }, // ✅ NEW
+                { name: 'Weekly Fruit Boxes', path: '/weekly-boxes', icon: <MdInventory2 size={20} /> },
+                { name: 'Greeting Messages', path: '/admin/greetings', icon: <MdCelebration size={20} /> }, 
                 { name: 'Testimonials', path: '/marketing/testimonials', icon: <MdRecordVoiceOver size={20} /> },
                 { name: 'Banners', path: '/banners', icon: <MdViewCarousel size={20} /> },
                 { name: 'Campaigns', path: '/campaigns', icon: <MdLocalOffer size={20} /> },

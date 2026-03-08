@@ -27,6 +27,9 @@ const AddEditCampaign = () => {
     start_date: '',
     end_date: '',
     is_active: true,
+    discount_type: 'percentage', // 🔥 Added for logic
+    discount_value: 0,
+    is_featured: false,     // 🔥 Added for logic
   });
 
   const [image, setImage] = useState(null);
@@ -38,6 +41,17 @@ const AddEditCampaign = () => {
     preselectedIds,
     deep: true,
   });
+
+  // 🔥 AUTO SLUG GENERATION
+  useEffect(() => {
+    if (!isEditMode && formData.name) {
+      const generatedSlug = formData.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-') // replace non-alphanumeric with hyphen
+        .replace(/(^-|-$)+/g, '');    // remove leading/trailing hyphens
+      setFormData(prev => ({ ...prev, slug: generatedSlug }));
+    }
+  }, [formData.name, isEditMode]);
 
   /* LOAD CAMPAIGN (EDIT MODE) */
   useEffect(() => {
@@ -56,49 +70,88 @@ const AddEditCampaign = () => {
         start_date: formatDT(c.start_date),
         end_date: formatDT(c.end_date),
         is_active: c.is_active === 1,
+        discount_type: c.discount_type || 'percentage', // 🔥 Load from DB
+        discount_value: c.discount_value || 0,
+        is_featured: c.is_featured === 1,     // 🔥 Load from DB
       });
 
       if (c.banner_image) {
         setPreview(IMAGE_BASE + c.banner_image);
       }
 
-      // 🔥 ONLY IDS (NO PRODUCTS)
       setPreselectedIds(c.product_ids || []);
     });
   }, [id]);
 
   /* SUBMIT */
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   const fd = new FormData();
+  //   fd.append('name', formData.name);
+  //   fd.append('subtitle', formData.subtitle);
+  //   fd.append('slug', formData.slug);
+  //   fd.append('start_date', formData.start_date);
+  //   fd.append('end_date', formData.end_date);
+  //   fd.append('is_active', formData.is_active ? 1 : 0);
+  //   fd.append('discount_type', formData.discount_type);   // 🔥 Send to API
+  //   fd.append('discount_value', formData.discount_value); // 🔥 Send to API
+
+  //   fd.append(
+  //     'product_ids',
+  //     JSON.stringify(selector.selectedProducts.map(p => p.id))
+  //   );
+
+  //   if (image) fd.append('image', image);
+
+  //   try {
+  //     isEditMode
+  //       ? await api.put(`/campaigns/${id}`, fd)
+  //       : await api.post('/campaigns', fd);
+
+  //     toast.success(isEditMode ? 'Campaign Updated' : 'Campaign Created');
+  //     navigate('/campaigns');
+  //   } catch (err) {
+  //     toast.error(err.response?.data?.message || 'Failed');
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const fd = new FormData();
-    fd.append('name', formData.name);
-    fd.append('subtitle', formData.subtitle);
-    fd.append('slug', formData.slug);
-    fd.append('start_date', formData.start_date);
-    fd.append('end_date', formData.end_date);
-    fd.append('is_active', formData.is_active ? 1 : 0);
+    const data = new FormData();
 
-    // 🔥 SINGLE SOURCE OF TRUTH
-    fd.append(
-      'product_ids',
+    // form fields append
+    Object.entries(formData).forEach(([k, v]) => data.append(k, v));
+
+    // products append
+    data.append(
+      "product_ids",
       JSON.stringify(selector.selectedProducts.map(p => p.id))
     );
 
-    if (image) fd.append('image', image);
+    // image append
+    if (image) data.append("image", image);
 
     try {
-      isEditMode
-        ? await api.put(`/campaigns/${id}`, fd)
-        : await api.post('/campaigns', fd);
 
-      toast.success(isEditMode ? 'Campaign Updated' : 'Campaign Created');
-      navigate('/campaigns');
+      const res = isEditMode
+        ? await api.put(`/campaigns/${id}`, data, {
+          headers: { "Content-Type": "multipart/form-data" }
+        })
+        : await api.post(`/campaigns`, data, {
+          headers: { "Content-Type": "multipart/form-data" }
+        });
+
+      if (res.data.success) {
+        toast.success(isEditMode ? "Campaign Updated" : "Campaign Created");
+        navigate("/campaigns");
+      }
+
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed');
+      toast.error(err.response?.data?.message || "Failed");
     }
   };
-
   return (
     <Layout>
       <div className="max-w-6xl mx-auto">
@@ -117,7 +170,7 @@ const AddEditCampaign = () => {
             {isEditMode ? 'Edit Campaign' : 'Create Campaign'}
           </h1>
 
-          {/* IMAGE */}
+          {/* IMAGE SECTION */}
           <div className="border-2 border-dashed rounded-lg p-4 text-center">
             {preview ? (
               <img src={preview} className="h-40 mx-auto object-cover rounded" />
@@ -128,7 +181,7 @@ const AddEditCampaign = () => {
               </div>
             )}
 
-            <label className="inline-flex items-center gap-2 mt-3 bg-gray-100 px-4 py-2 rounded cursor-pointer">
+            <label className="inline-flex items-center gap-2 mt-3 bg-gray-100 px-4 py-2 rounded cursor-pointer hover:bg-gray-200 transition">
               <MdCloudUpload /> Choose Banner
               <input
                 type="file"
@@ -146,74 +199,117 @@ const AddEditCampaign = () => {
 
           {/* BASIC INFO */}
           <div className="grid md:grid-cols-2 gap-4">
-            <input
-              required
-              placeholder="Campaign Name"
-              className="border p-2 rounded"
-              value={formData.name}
-              onChange={e =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-            />
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-bold text-gray-600">Campaign Name</label>
+              <input
+                required
+                placeholder="Ex: Summer Sale"
+                className="border p-2 rounded focus:ring-2 focus:ring-[#064E3B] outline-none"
+                value={formData.name}
+                onChange={e => setFormData({ ...formData, name: e.target.value })}
+              />
+            </div>
 
-            <input
-              placeholder="Subtitle"
-              className="border p-2 rounded"
-              value={formData.subtitle}
-              onChange={e =>
-                setFormData({ ...formData, subtitle: e.target.value })
-              }
-            />
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-bold text-gray-600">Slug (Auto-generated)</label>
+              <input
+                required
+                placeholder="slug-url"
+                className="border p-2 rounded bg-gray-50 outline-none"
+                value={formData.slug}
+                readOnly={!isEditMode} // Edit mode me change kar sakte hain, naye me auto
+                onChange={e => setFormData({ ...formData, slug: e.target.value })}
+              />
+            </div>
 
-            <input
-              type="datetime-local"
-              required
-              className="border p-2 rounded"
-              value={formData.start_date}
-              onChange={e =>
-                setFormData({ ...formData, start_date: e.target.value })
-              }
-            />
+            <div className="flex flex-col gap-1 md:col-span-2">
+              <label className="text-xs font-bold text-gray-600">Subtitle</label>
+              <input
+                placeholder="Ex: Get 20% OFF on all fruits"
+                className="border p-2 rounded focus:ring-2 focus:ring-[#064E3B] outline-none"
+                value={formData.subtitle}
+                onChange={e => setFormData({ ...formData, subtitle: e.target.value })}
+              />
+            </div>
 
-            <input
-              type="datetime-local"
-              required
-              className="border p-2 rounded"
-              value={formData.end_date}
-              onChange={e =>
-                setFormData({ ...formData, end_date: e.target.value })
-              }
-            />
+            {/* 🔥 DISCOUNT SECTION */}
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-bold text-gray-600">Discount Type</label>
+              <select
+                className="border p-2 rounded outline-none"
+                value={formData.discount_type}
+                onChange={e => setFormData({ ...formData, discount_type: e.target.value })}
+              >
+                <option value="percentage">Percentage (%)</option>
+                <option value="flat">Flat Amount (AED)</option>
+              </select>
+            </div>
 
-            <input
-              required
-              placeholder="Slug"
-              className="border p-2 rounded md:col-span-2"
-              value={formData.slug}
-              onChange={e =>
-                setFormData({ ...formData, slug: e.target.value })
-              }
-            />
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-bold text-gray-600">Discount Value</label>
+              <input
+                type="number"
+                required
+                placeholder="0.00"
+                className="border p-2 rounded outline-none"
+                value={formData.discount_value}
+                onChange={e => setFormData({ ...formData, discount_value: e.target.value })}
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-bold text-gray-600">Start Date</label>
+              <input
+                type="datetime-local"
+                required
+                className="border p-2 rounded outline-none"
+                value={formData.start_date}
+                onChange={e => setFormData({ ...formData, start_date: e.target.value })}
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-bold text-gray-600">End Date</label>
+              <input
+                type="datetime-local"
+                required
+                className="border p-2 rounded outline-none"
+                value={formData.end_date}
+                onChange={e => setFormData({ ...formData, end_date: e.target.value })}
+              />
+            </div>
           </div>
 
           {/* 🔥 SHARED PRODUCT SELECTOR */}
-          <ProductSelector {...selector} />
+          <div className="border-t pt-4">
+            <h2 className="text-sm font-bold text-gray-700 mb-2">Select Products for this Campaign</h2>
+            <ProductSelector {...selector} />
+          </div>
 
-          {/* ACTIVE */}
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={formData.is_active}
-              onChange={e =>
-                setFormData({ ...formData, is_active: e.target.checked })
-              }
-            />
-            Active
-          </label>
-
-          <button className="w-full bg-[#064E3B] text-white py-2 rounded flex justify-center gap-2">
-            <MdSave /> Save Campaign
-          </button>
+          {/* ACTIVE & SUBMIT */}
+          <div className="flex items-center justify-between border-t pt-4">
+            <label className="flex items-center gap-2 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                className="w-4 h-4 accent-[#064E3B]"
+                checked={formData.is_active}
+                onChange={e => setFormData({ ...formData, is_active: e.target.checked })}
+              />
+              <span className="font-bold text-gray-700">Set as Active</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer bg-orange-50 p-3 rounded-xl border border-orange-200">
+              <input
+                type="checkbox"
+                className="w-4 h-4 accent-orange-600"
+                checked={formData.is_featured}
+                onChange={e => setFormData({ ...formData, is_featured: e.target.checked })}
+              />
+              <span className="font-bold text-orange-800 text-sm">Show on Home Page (Deal of the Day)</span>
+            </label>
+            <button className="bg-[#064E3B] hover:bg-[#053d2e] text-white px-8 py-2.5 rounded-lg flex items-center gap-2 font-bold shadow-lg transition-all">
+              <MdSave size={20} /> Save Campaign
+            </button>
+          </div>
         </form>
       </div>
     </Layout>
