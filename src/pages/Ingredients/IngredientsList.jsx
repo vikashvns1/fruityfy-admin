@@ -101,6 +101,7 @@ const IngredientsList = () => {
                 <th className="p-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Ingredient</th>
                 <th className="p-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Type</th>
                 <th className="p-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Nutritional Info</th>
+                <th className="p-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Visual</th>
                 <th className="p-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Price/Unit</th>
                 <th className="p-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider text-center">Stock</th>
                 <th className="p-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider text-center">Status</th>
@@ -147,7 +148,21 @@ const IngredientsList = () => {
                         </div>
                       </div>
                     </td>
-
+                    {/* Color Code Column */}
+                    <td className="p-4">
+                      <div className="flex items-center gap-2">
+                        {/* Rang ka preview dikhane ke liye chota circle */}
+                        <div
+                          className="w-6 h-6 rounded-full border border-gray-200 shadow-sm"
+                          style={{ backgroundColor: item.color_code || '#FFFFFF' }}
+                          title={item.color_code}
+                        ></div>
+                        {/* Hex code text */}
+                        <span className="text-[10px] font-mono font-bold text-gray-500 uppercase">
+                          {item.color_code || '#FFFFFF'}
+                        </span>
+                      </div>
+                    </td>
                     <td className="p-4">
                       <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${getTypeBadge(item.type)}`}>
                         {item.type}
@@ -193,8 +208,8 @@ const IngredientsList = () => {
 
                     <td className="p-4 text-right">
                       <div className="flex justify-end gap-2 opacity-80 group-hover:opacity-120 transition-opacity">
-                        <Link 
-                          to={`/ingredients/edit/${item.id}`} 
+                        <Link
+                          to={`/ingredients/edit/${item.id}`}
                           className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                         >
                           <MdEdit size={18} />

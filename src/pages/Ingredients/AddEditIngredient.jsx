@@ -3,7 +3,7 @@ import Layout from "../../components/Layout";
 import api from "../../utils/api";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { MdArrowBack, MdSave, MdCloudUpload } from "react-icons/md";
+import { MdArrowBack, MdSave, MdCloudUpload,MdPalette } from "react-icons/md";
 
 const AddEditIngredient = () => {
     const { id } = useParams();
@@ -23,7 +23,8 @@ const AddEditIngredient = () => {
         calories: "0",
         sugar_level: "medium",
         health_tags: "",
-        image_url: "", // DB se aane wali image path ke liye
+        image_url: "",
+        color_code: "#FFFFFF",
         is_active: 1
     });
 
@@ -221,7 +222,32 @@ const AddEditIngredient = () => {
                                     className="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:border-[#064E3B] outline-none"
                                 />
                             </div>
-
+<div>
+                                <label className="block text-sm font-semibold text-[#064E3B] mb-2 flex items-center gap-2">
+                                    <MdPalette /> Juice Color Code (Hex)
+                                </label>
+                                <div className="flex gap-3">
+                                    <input
+                                        type="color"
+                                        value={form.color_code}
+                                        onChange={e => setForm({ ...form, color_code: e.target.value.toUpperCase() })}
+                                        className="w-12 h-10 border-none rounded cursor-pointer bg-transparent"
+                                    />
+                                    <input
+                                        type="text"
+                                        maxLength="7"
+                                        value={form.color_code}
+                                        onChange={e => setForm({ ...form, color_code: e.target.value.toUpperCase() })}
+                                        className="flex-1 px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:border-[#064E3B] outline-none font-mono"
+                                        placeholder="#FFFFFF"
+                                    />
+                                    <div 
+                                        className="w-10 h-10 rounded-lg border border-gray-200 shadow-inner" 
+                                        style={{ backgroundColor: form.color_code }}
+                                    ></div>
+                                </div>
+                            </div>
+                            {/* ------------------------------ */}
                             {/* IMAGE UPLOAD PART - REPLACED INPUT WITH FILE PICKER */}
                             <div className="md:col-span-2">
                                 <label className="block text-sm font-semibold text-[#064E3B] mb-2">Ingredient Image</label>
