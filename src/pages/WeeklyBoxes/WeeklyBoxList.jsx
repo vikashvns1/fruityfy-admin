@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import Layout from '../../components/Layout';
 import { useNavigate } from 'react-router-dom';
-import api from '../../utils/api';
+import api,{API_BASE_URL} from '../../utils/api';
 import { MdAdd, MdEdit, MdDelete, MdShoppingBasket, MdTrendingDown } from 'react-icons/md';
 import { toast } from 'react-toastify';
 
-const IMAGE_BASE = 'http://localhost:5000';
+const IMAGE_BASE = API_BASE_URL;
 
 const WeeklyBoxList = () => {
   const navigate = useNavigate();

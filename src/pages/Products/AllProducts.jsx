@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Layout from '../../components/Layout';
-import api from '../../utils/api';
+import api,{API_BASE_URL} from '../../utils/api';
 import { MdAdd, MdEdit, MdDelete, MdSearch, MdWarning, MdCheckCircle, MdCancel, MdTrendingUp,MdShoppingBag,MdAutoFixHigh } from 'react-icons/md';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -178,7 +178,7 @@ const AllProducts = () => {
                                         <td className="p-3">
                                             <div className="h-12 w-12 rounded-lg bg-gray-50 border border-gray-200 overflow-hidden shrink-0">
                                                 {product.image_url ? (
-                                                    <img src={`http://localhost:5000${product.image_url}`} alt={product.name} className="h-full w-full object-cover" />
+                                                    <img src={`${API_BASE_URL}${product.image_url}`} alt={product.name} className="h-full w-full object-cover" />
                                                 ) : (
                                                     <div className="h-full w-full flex items-center justify-center text-gray-300 text-xs">No Img</div>
                                                 )}

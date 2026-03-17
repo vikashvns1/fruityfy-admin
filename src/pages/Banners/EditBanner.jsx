@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Layout from '../../components/Layout';
-import api from '../../utils/api';
+import api,{API_BASE_URL} from '../../utils/api';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { MdArrowBack, MdCloudUpload, MdSave } from 'react-icons/md';
@@ -52,7 +52,7 @@ const EditBanner = () => {
             image: null
           });
 
-          setPreview(`http://localhost:5000${banner.media_url}`);
+          setPreview(`${API_BASE_URL}${banner.media_url}`);
         }
       } catch (err) {
         console.error(err);

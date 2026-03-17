@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import Layout from '../../components/Layout';
-import api from '../../utils/api';
+import api, {API_BASE_URL} from '../../utils/api';
 import { toast } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
 import { MdCloudUpload, MdArrowBack, MdSave } from 'react-icons/md';
@@ -49,7 +49,7 @@ const EditCategory = () => {
                         is_new: data.is_new || 0
                     });
                     if (data.image_url) {
-                        setPreview(`http://localhost:5000${data.image_url}`);
+                        setPreview(`${API_BASE_URL}${data.image_url}`);
                     }
                 }
             } catch (error) {

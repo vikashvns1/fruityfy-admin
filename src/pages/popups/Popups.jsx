@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Layout from '../../components/Layout';
-import api from '../../utils/api';
+import api,{API_BASE_URL} from '../../utils/api';
 import { toast } from 'react-toastify';
 import { MdAdd, MdDelete, MdToggleOn, MdToggleOff, MdLink } from 'react-icons/md';
 
@@ -117,7 +117,7 @@ const Popups = () => {
                 {popups.map(popup => (
                     <div key={popup.id} className={`relative group border rounded-xl overflow-hidden shadow-sm ${popup.is_active ? 'border-green-500 ring-1 ring-green-500' : 'border-gray-200'}`}>
                         <div className="h-48 bg-gray-100 relative">
-                            <img src={`http://localhost:5000${popup.image_url}`} alt="Popup" className="w-full h-full object-contain" />
+                            <img src={`${API_BASE_URL}${popup.image_url}`} alt="Popup" className="w-full h-full object-contain" />
                             {popup.is_active ? (
                                 <span className="absolute top-2 right-2 bg-green-500 text-white text-[10px] font-bold px-2 py-1 rounded-full">ACTIVE</span>
                             ) : (

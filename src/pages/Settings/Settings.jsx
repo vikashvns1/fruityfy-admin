@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Layout from '../../components/Layout';
-import api from '../../utils/api';
+import api,{API_BASE_URL} from '../../utils/api';
 import {
     MdSave, MdSettings, MdAttachMoney, MdSupportAgent,
     MdPublic, MdVerifiedUser, MdViewQuilt, MdTimer
@@ -9,7 +9,7 @@ import { toast } from 'react-toastify';
 
 const Settings = () => {
     const [loading, setLoading] = useState(false);
-    const BASE_URL = "http://localhost:5000";
+    const BASE_URL = API_BASE_URL;
 
     const [formData, setFormData] = useState({
         // Financials

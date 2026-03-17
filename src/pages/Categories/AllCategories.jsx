@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Layout from '../../components/Layout';
-import api from '../../utils/api';
+import api , {API_BASE_URL}from '../../utils/api';
 import { MdAdd, MdEdit, MdDelete, MdSearch, MdArrowBack, MdFolderOpen, MdChevronRight, MdFilterList } from 'react-icons/md';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -193,7 +193,7 @@ const AllCategories = () => {
                                         <td className="p-3">
                                             <div className="h-10 w-10 rounded-md bg-gray-100 border border-gray-200 overflow-hidden shrink-0">
                                                 {cat.image_url ? (
-                                                    <img src={`http://localhost:5000${cat.image_url}`} alt={cat.name} className="h-full w-full object-cover" />
+                                                    <img src={`${API_BASE_URL}${cat.image_url}`} alt={cat.name} className="h-full w-full object-cover" />
                                                 ) : (
                                                     <div className="h-full w-full flex items-center justify-center text-gray-300">
                                                         <MdFolderOpen size={20} />

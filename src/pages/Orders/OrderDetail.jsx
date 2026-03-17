@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Layout from '../../components/Layout';
-import api from '../../utils/api';
+import api,{API_BASE_URL} from '../../utils/api';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import {
@@ -236,7 +236,7 @@ const OrderDetail = () => {
                                             <div className="flex items-start gap-4">
                                                 <div className="h-12 w-12 rounded-lg bg-gray-100 border border-gray-200 overflow-hidden shrink-0 flex items-center justify-center">
                                                     <img
-                                                        src={`http://localhost:5000${item.product_image}`}
+                                                        src={`${API_BASE_URL}${item.product_image}`}
                                                         alt=""
                                                         className="max-h-full object-contain mix-blend-multiply"
                                                     />

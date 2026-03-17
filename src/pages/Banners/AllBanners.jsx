@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Layout from '../../components/Layout';
-import api from '../../utils/api';
+import api , {API_BASE_URL} from '../../utils/api';
 import {
   MdAdd,
   MdDelete,
@@ -94,7 +94,7 @@ const AllBanners = () => {
               {/* IMAGE */}
               <div className="relative h-44 bg-gray-100">
                 <img
-                  src={`http://localhost:5000${b.media_url}`}
+                  src={`${API_BASE_URL}${b.media_url}`}
                   alt={b.title}
                   className="h-full w-full object-cover"
                 />

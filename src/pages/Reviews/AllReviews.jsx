@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Layout from '../../components/Layout';
-import api from '../../utils/api';
+import api,{API_BASE_URL} from '../../utils/api';
 import { MdStar, MdDelete, MdImageNotSupported } from 'react-icons/md';
 import { toast } from 'react-toastify';
 
@@ -101,7 +101,7 @@ const AllReviews = () => {
                                             <div className="h-10 w-10 rounded bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center shrink-0">
                                                 {review.product_image ? (
                                                     <img
-                                                        src={`http://localhost:5000${review.product_image}`}
+                                                        src={`${API_BASE_URL}${review.product_image}`}
                                                         alt={review.product_name}
                                                         className="h-full w-full object-cover"
                                                     />
@@ -137,10 +137,10 @@ const AllReviews = () => {
                                                         <div
                                                             key={idx}
                                                             className="group relative h-12 w-12 rounded-md border border-gray-200 overflow-hidden bg-gray-50 cursor-zoom-in"
-                                                            onClick={() => window.open(`http://localhost:5000${imgUrl}`, '_blank')}
+                                                            onClick={() => window.open(`${API_BASE_URL$}${imgUrl}`, '_blank')}
                                                         >
                                                             <img
-                                                                src={`http://localhost:5000${imgUrl}`}
+                                                                src={`${API_BASE_URL}${imgUrl}`}
                                                                 alt={`Review ${idx}`}
                                                                 className="h-full w-full object-cover transition-transform group-hover:scale-110"
                                                             />

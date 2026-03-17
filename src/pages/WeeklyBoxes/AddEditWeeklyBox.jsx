@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Layout from '../../components/Layout';
-import api from '../../utils/api';
+import api,{API_BASE_URL} from '../../utils/api';
 import { toast } from 'react-toastify';
 import {
   MdArrowBack,
@@ -14,7 +14,7 @@ import {
 import { useProductSelector } from '../../hooks/useProductSelector';
 import ProductSelector from '../../components/ProductSelector';
 
-const IMAGE_BASE = 'http://localhost:5000';
+const IMAGE_BASE = API_BASE_URL;
 
 const AddEditWeeklyBox = () => {
   const { id } = useParams();

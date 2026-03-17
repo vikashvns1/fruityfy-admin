@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Layout from '../../components/Layout';
-import api from '../../utils/api';
+import api,{API_BASE_URL} from '../../utils/api';
 import { toast } from 'react-toastify';
 import { MdCloudUpload, MdSave, MdArrowBack, MdImage } from 'react-icons/md';
 
 import { useProductSelector } from '../../hooks/useProductSelector';
 import ProductSelector from '../../components/ProductSelector';
 
-const IMAGE_BASE = 'http://localhost:5000';
+const IMAGE_BASE = API_BASE_URL;
 
 const AddEditOccasion = () => {
   const { id } = useParams();

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE } from '../utils/api'; // Import the base URL from api.js
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -15,7 +16,7 @@ const Login = () => {
 
         try {
             // Connect to your Backend API
-            const res = await axios.post('http://localhost:5000/api/auth/login', {
+            const res = await axios.post(`${API_BASE}/auth/login`, {
                 email,
                 password
             });

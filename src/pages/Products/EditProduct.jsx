@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import Layout from '../../components/Layout';
-import api from '../../utils/api';
+import api,{API_BASE_URL} from '../../utils/api';
 import { toast } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
 import { MdCloudUpload, MdArrowBack, MdSave, MdDelete,MdAutoFixHigh,MdShoppingBag } from 'react-icons/md';
@@ -376,7 +376,7 @@ const EditProduct = () => {
                             {/* 1. Existing Images from DB */}
                             {existingImages.map((img) => (
                                 <div key={img.id} className="relative group h-32 border rounded-lg overflow-hidden bg-gray-50 border-gray-200">
-                                    <img src={`http://localhost:5000${img.image_url}`} alt="Product" className="w-full h-full object-cover" />
+                                    <img src={`${API_BASE_URL}${img.image_url}`} alt="Product" className="w-full h-full object-cover" />
                                     
                                     {/* Primary Badge */}
                                     {img.is_primary === 1 && (

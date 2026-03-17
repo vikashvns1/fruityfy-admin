@@ -1,6 +1,6 @@
 import { MdClose } from 'react-icons/md';
-
-const IMAGE_BASE = 'http://localhost:5000';
+import {API_BASE_URL} from '../utils/api'; // Import the base URL from api.js
+const IMAGE_BASE = API_BASE_URL;
 
 export default function ProductMiniCard({
   product,

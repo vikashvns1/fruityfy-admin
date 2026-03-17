@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Layout from '../../components/Layout';
-import api from '../../utils/api';
+import api,{API_BASE_URL} from '../../utils/api';
 import { MdAdd, MdDelete, MdEdit, MdEvent, MdLink } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 const AllOccasions = () => {
     const [occasions, setOccasions] = useState([]);
     const [loading, setLoading] = useState(true);
-    const BASE_URL = "http://localhost:5000";
+    const BASE_URL = API_BASE_URL;
 
     const fetchOccasions = async () => {
         try {

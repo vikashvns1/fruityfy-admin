@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Layout from '../../components/Layout';
-import api from '../../utils/api';
+import api,{API_BASE_URL} from '../../utils/api';
 import { 
     MdAdd, MdEvent, MdTimer, MdLocalOffer, 
     MdEdit, MdDelete, MdStar, MdMoneyOff 
@@ -11,7 +11,7 @@ import { toast } from 'react-toastify';
 const AllCampaigns = () => {
     const [campaigns, setCampaigns] = useState([]);
     const [loading, setLoading] = useState(true);
-    const BASE_URL = "http://localhost:5000";
+    const BASE_URL = API_BASE_URL;
 
     const fetchCampaigns = async () => {
         try {

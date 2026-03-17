@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Layout from '../../components/Layout';
-import api from '../../utils/api';
+import api,{API_BASE_URL} from '../../utils/api';
 import { toast } from 'react-toastify';
 import { MdSave, MdArrowBack, MdStar, MdCloudUpload, MdPerson } from 'react-icons/md';
 
@@ -9,7 +9,7 @@ const AddEditTestimonial = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const isEditMode = !!id;
-    const BASE_URL = "http://localhost:5000";
+    const BASE_URL = API_BASE_URL;
 
     const [formData, setFormData] = useState({
         customer_name: '',

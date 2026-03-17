@@ -2,11 +2,13 @@
 import { toast } from 'react-toastify';
 
 // 1. Base URL Configuration (Change this once for the whole app)
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 
 // 2. Create Axios Instance
 const api = axios.create({
-    baseURL: API_BASE_URL,
+    baseURL: API_BASE,
     headers: {
         'Content-Type': 'application/json',
     },
@@ -44,3 +46,4 @@ api.interceptors.response.use(
 );
 
 export default api;
+export { API_BASE_URL,API_BASE };

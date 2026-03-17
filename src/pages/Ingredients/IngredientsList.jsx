@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Layout from "../../components/Layout";
-import api from "../../utils/api";
+import api,{API_BASE_URL} from "../../utils/api";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
@@ -128,7 +128,7 @@ const IngredientsList = () => {
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-lg bg-gray-100 overflow-hidden border border-gray-200 shadow-sm flex-shrink-0">
                           {item.image_url ? (
-                            <img src={`http://localhost:5000${item.image_url}`} alt={item.name} className="h-full w-full object-cover" />
+                            <img src={`${API_BASE_URL}${item.image_url}`} alt={item.name} className="h-full w-full object-cover" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-gray-300 font-bold text-xs uppercase">
                               {item.name.substring(0, 2)}

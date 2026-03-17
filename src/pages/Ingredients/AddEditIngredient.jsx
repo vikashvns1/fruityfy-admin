@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Layout from "../../components/Layout";
-import api from "../../utils/api";
+import api , {API_BASE_URL} from "../../utils/api";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { MdArrowBack, MdSave, MdCloudUpload,MdPalette } from "react-icons/md";
@@ -37,7 +37,7 @@ const AddEditIngredient = () => {
                         setForm(res.data.data);
                         // Agar pehle se image hai toh preview dikhao
                         if (res.data.data.image_url) {
-                            setPreview(`http://localhost:5000${res.data.data.image_url}`);
+                            setPreview(`${API_BASE_URL}${res.data.data.image_url}`);
                         }
                     }
                 })
