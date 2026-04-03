@@ -18,7 +18,8 @@ const Login = () => {
             // Connect to your Backend API
             const res = await axios.post(`${API_BASE}/auth/login`, {
                 email,
-                password
+                password,
+                role: 'admin' // Ensure the role is sent as 'admin' for authentication
             });
 
             if (res.data.success) {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Layout from '../../components/Layout';
-import api,{API_BASE_URL} from '../../utils/api';
+import api, { API_BASE_URL } from '../../utils/api';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import {
@@ -16,11 +16,6 @@ const OrderDetail = () => {
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // --- State for Global Order Update ---
-    const [newStatus, setNewStatus] = useState('');
-    const [updateComment, setUpdateComment] = useState('');
-    const [updating, setUpdating] = useState(false);
-
     // --- State for Item Level Update ---
     const [selectedItems, setSelectedItems] = useState([]);
     const [itemStatus, setItemStatus] = useState('');
@@ -32,7 +27,6 @@ const OrderDetail = () => {
             const res = await api.get(`/orders/${id}`);
             if (res.data.success) {
                 setOrder(res.data.data);
-                setNewStatus(res.data.data.order_status);
                 setSelectedItems([]);
             }
         } catch (error) {
@@ -47,25 +41,6 @@ const OrderDetail = () => {
         fetchOrderDetails();
     }, [id]);
 
-    // 2. Handle Global Status Update (Master Order)
-    const handleUpdateStatus = async () => {
-        setUpdating(true);
-        try {
-            const res = await api.put(`/orders/${id}/status`, {
-                order_status: newStatus,
-                comment: updateComment
-            });
-            if (res.data.success) {
-                toast.success("Main Order status updated successfully!");
-                fetchOrderDetails();
-                setUpdateComment('');
-            }
-        } catch (error) {
-            // Handled by interceptor
-        } finally {
-            setUpdating(false);
-        }
-    };
 
     // 3. Item Selection Logic
     const toggleItemSelection = (itemId) => {
@@ -151,6 +126,15 @@ const OrderDetail = () => {
     if (loading) return <Layout><div className="p-10 text-center">Loading Order...</div></Layout>;
     if (!order) return <Layout><div className="p-10 text-center">Order not found</div></Layout>;
 
+    const totalItems = order.items.length;
+
+const deliveredItems = order.items.filter(i => i.item_status === 'delivered').length;
+const shippedItems = order.items.filter(i => i.item_status === 'shipped').length;
+const preparingItems = order.items.filter(i => i.item_status === 'preparing').length;
+
+const progressPercent = totalItems > 0 
+  ? (deliveredItems / totalItems) * 100 
+  : 0;
     return (
         <Layout>
             {/* --- Header Section --- */}
@@ -166,7 +150,7 @@ const OrderDetail = () => {
                 </div>
                 <div className="ml-auto flex items-center gap-3">
                     {/* ⭐ PRINT BUTTON ADDED */}
-                    <button 
+                    <button
                         onClick={handlePrint}
                         className="flex items-center gap-2 bg-gray-800 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-black transition-all shadow-md"
                     >
@@ -185,6 +169,27 @@ const OrderDetail = () => {
                         {order.order_status.replace(/_/g, " ")}
                     </span>
                 </div>
+                <div className="mt-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+  
+  <div className="flex justify-between text-xs text-gray-600 mb-2">
+    <span>Order Progress</span>
+    <span>{Math.round(progressPercent)}%</span>
+  </div>
+
+  <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+    <div 
+      className="bg-green-600 h-2 transition-all duration-500"
+      style={{ width: `${progressPercent}%` }}
+    />
+  </div>
+
+  <div className="flex justify-between text-[11px] text-gray-500 mt-2">
+    <span>Delivered: {deliveredItems}</span>
+    <span>Shipped: {shippedItems}</span>
+    <span>Preparing: {preparingItems}</span>
+  </div>
+
+</div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -265,10 +270,10 @@ const OrderDetail = () => {
                                                             <div className="flex flex-wrap gap-2">
                                                                 {(() => {
                                                                     try {
-                                                                        const config = typeof item.customization === 'string' 
-                                                                            ? JSON.parse(item.customization) 
+                                                                        const config = typeof item.customization === 'string'
+                                                                            ? JSON.parse(item.customization)
                                                                             : item.customization;
-                                                                        
+
                                                                         return config.ingredients?.map((ing, i) => (
                                                                             <span key={i} className="text-[10px] bg-white border border-gray-100 px-2 py-0.5 rounded-full text-gray-600">
                                                                                 {ing.name} ({ing.qty}{ing.unit})
@@ -277,6 +282,19 @@ const OrderDetail = () => {
                                                                     } catch (e) {
                                                                         return <span className="text-[10px] text-gray-400 italic">Processing details...</span>;
                                                                     }
+                                                                })()}
+                                                            </div>
+                                                            {/* ⭐ ADDED: Selected Options (Glass Size, Sweetness etc.) */}
+                                                            <div className="flex flex-wrap gap-2 border-t border-[#FACC15]/20 pt-2">
+                                                                {(() => {
+                                                                    try {
+                                                                        const config = typeof item.customization === 'string' ? JSON.parse(item.customization) : item.customization;
+                                                                        return config.selected_options_details?.map((opt, i) => (
+                                                                            <span key={i} className="text-[10px] bg-[#064E3B] text-white px-2 py-0.5 rounded-md font-bold">
+                                                                                {opt.option_name}: {opt.value_name}
+                                                                            </span>
+                                                                        ));
+                                                                    } catch (e) { return null; }
                                                                 })()}
                                                             </div>
                                                         </div>
@@ -333,7 +351,7 @@ const OrderDetail = () => {
                     </div>
 
                     {/* 2. GLOBAL ORDER UPDATE */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                    {/* <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                         <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
                             <MdLocalShipping className="text-[#064E3B]" /> Update Main Order
                         </h3>
@@ -372,7 +390,7 @@ const OrderDetail = () => {
                                 <MdSave /> Update
                             </button>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* --- RIGHT COLUMN (Information) --- */}
@@ -495,14 +513,29 @@ const OrderDetail = () => {
                                     <td className="py-4 font-bold uppercase">
                                         {item.product_name}
                                         {/* Recipe Slip included in Print */}
+                                        {/* Recipe Slip included in Print (Inside <td>) */}
                                         {item.customization && (
                                             <div className="mt-2 text-[9px] font-black bg-gray-50 p-2 rounded-lg border border-dashed border-gray-300">
-                                                <p className="mb-1 text-red-600 underline uppercase">Kitchen Slip:</p>
+                                                <p className="mb-1 text-red-600 underline uppercase">Kitchen & Packing Slip:</p>
                                                 {(() => {
                                                     const config = typeof item.customization === 'string' ? JSON.parse(item.customization) : item.customization;
-                                                    return config.ingredients?.map((ing, i) => (
-                                                        <span key={i} className="mr-2">• {ing.name} ({ing.qty}{ing.unit})</span>
-                                                    ))
+                                                    return (
+                                                        <>
+                                                            <div className="mb-1">
+                                                                <strong>Ingredients: </strong>
+                                                                {config.ingredients?.map((ing, i) => (
+                                                                    <span key={i} className="mr-2">• {ing.name} ({ing.qty}{ing.unit})</span>
+                                                                ))}
+                                                            </div>
+                                                            {/* Displaying Options like Glass Size, Honey etc. */}
+                                                            <div className="mt-1 pt-1 border-t border-gray-200 text-blue-800">
+                                                                <strong>Preferences: </strong>
+                                                                {config.selected_options_details?.map((opt, i) => (
+                                                                    <span key={i} className="mr-2">[{opt.option_name}: {opt.value_name}]</span>
+                                                                ))}
+                                                            </div>
+                                                        </>
+                                                    );
                                                 })()}
                                             </div>
                                         )}
